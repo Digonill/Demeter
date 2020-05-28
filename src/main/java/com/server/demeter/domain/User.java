@@ -1,7 +1,6 @@
 package com.server.demeter.domain;
 
 import java.io.Serializable;
-import java.security.KeyStore.TrustedCertificateEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -21,8 +20,10 @@ public class User implements Serializable {
     private String firstName;
     private String lastName;
     private String email;
+    private String password;
+    private boolean enabled;
 
-    @DBRef( lazy = true ) //Chave estrangeira (FK)
+    @DBRef(lazy = true) // Chave estrangeira (FK)
     private List<Role> roles = new ArrayList<>();
 
     public User() {
@@ -35,11 +36,15 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public User(final String id, final String firstName, final String lastName, final String email) {
+    public User(final String id, final String firstName, final String lastName,
+     final String email, final String password, final boolean enabled) {
+
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.password = password;
+        this.enabled = enabled;
     }
 
     public User(UserDTO dto) {
@@ -47,13 +52,42 @@ public class User implements Serializable {
         this.firstName = dto.getFirstName();
         this.lastName = dto.getLastName();
         this.email = dto.getemail();
+        this.password = dto.getPassword();
+    }
+
+    public User(User user){
+        super();
+
+        this.id = user.getId();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.enabled = user.isEnabled();
+        this.roles = user.getRoles();
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public List<Role> getRoles(){
         return this.roles;
     }
 
-    public void setRole(final List<Role> roles){
+    public void setRoles(final List<Role> roles){
         this.roles = roles;
     }
 
@@ -81,7 +115,7 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 
-    public String getemail() {
+    public String getEmail() {
         return this.email;
     }
 
@@ -109,6 +143,6 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "{" + " id='" + getId() + "'" + ", firstName='" + getFirstName() + "'" + ", lastName='" + getLastName()
-                + "'" + ", email='" + getemail() + "'" + "}";
+                + "'" + ", email='" + getEmail() + "'" + "}";
     }
 }

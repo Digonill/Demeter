@@ -1,7 +1,10 @@
 package com.server.demeter.resources;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
 
 import com.server.demeter.domain.Role;
 import com.server.demeter.domain.User;
@@ -10,6 +13,10 @@ import com.server.demeter.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +32,12 @@ public class UserResource {
 
     @Autowired
     UserService service;
+
+    TokenStore tokenStore = new InMemoryTokenStore();
+
+    @Autowired
+    DefaultTokenServices tokenServices = new DefaultTokenServices();
+    
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> findAll() {
@@ -68,5 +81,30 @@ public class UserResource {
     public ResponseEntity<List<Role>> findRoles(@PathVariable String id) {
         User user = service.findbyID(id);
         return ResponseEntity.ok().body(user.getRoles());
+    }
+
+    @GetMapping(value = "/users/main")
+    public ResponseEntity<UserDTO> getUserMain(Principal principal) {
+        User user = this.service.findByEmail(principal.getName());
+
+        UserDTO dto = new UserDTO(user);
+        dto.setPassword("");
+        return ResponseEntity.ok().body(dto);
+    }
+
+    @GetMapping(value = "/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader != null) {
+
+            String tokenValue = authHeader.replace("Bearer", "").trim();
+            
+            OAuth2AccessToken accessToken = tokenServices.readAccessToken(tokenValue);
+            tokenStore.removeAccessToken(accessToken);
+            tokenServices.revokeToken(String.valueOf(accessToken));
+        
+        }
+        return ResponseEntity.noContent().build();
     }
 }

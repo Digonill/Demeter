@@ -7,11 +7,13 @@ import com.server.demeter.domain.Role;
 import com.server.demeter.domain.User;
 import com.server.demeter.repository.RoleRepository;
 import com.server.demeter.repository.UserRepository;
+import com.server.demeter.repository.VerificationTokenRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent>{
@@ -22,20 +24,31 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Autowired
     RoleRepository roleRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private VerificationTokenRepository verificationTokenRepository;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent){
 
         userRepository.deleteAll();
         roleRepository.deleteAll();
+        verificationTokenRepository.deleteAll();
 
         Role roleAdmin = createRoleIfNotFound("ROLE_ADMIN");
         Role roleUser = createRoleIfNotFound("ROLE_USER");
 
         User joao = new User("João", "Souza", "joao@gmail.com");
-        joao.setRole(Arrays.asList(roleAdmin));
+        joao.setRoles(Arrays.asList(roleAdmin));
+        joao.setPassword(passwordEncoder.encode("123"));
+        joao.setEnabled(true);
         
         User maria = new User("Maria", "Teixeira", "maria@gmail.com");
-        maria.setRole(Arrays.asList(roleUser));
+        maria.setRoles(Arrays.asList(roleUser));
+        maria.setPassword(passwordEncoder.encode("123"));
+        maria.setEnabled(true);
         
         User Laura = new User("Laura", "cordeiro", "Laura.cordeiro@gmail.com");
 
@@ -46,7 +59,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     private User createUserIfNotFound(final User user)
     {
-     Optional<User> obj = userRepository.findByEmail(user.getemail());
+     Optional<User> obj = userRepository.findByEmail(user.getEmail());
 
      if (obj.isPresent()){
          return obj.get();

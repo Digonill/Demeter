@@ -2,11 +2,11 @@ package com.server.demeter.domain;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
 
-import java.io.Serializable;
 
 @Document
-public class Role implements Serializable {
+public class Role implements GrantedAuthority {
     private static final long serialVersionUID = 1L;
     @Id
     private String id;
@@ -14,7 +14,7 @@ public class Role implements Serializable {
 
     public Role() { }
 
-    public Role(String name) {
+    public Role(final String name) {
         this.name = name;
     }
 
@@ -22,7 +22,7 @@ public class Role implements Serializable {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -30,7 +30,12 @@ public class Role implements Serializable {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getAuthority() {
+        return name;
     }
 }

@@ -1,11 +1,10 @@
 package com.server.demeter.services.exception;
 
-public class ObjectNotFoundException extends RuntimeException  {
+public class ObjectAlreadyExistException extends RuntimeException  {
 
     private static final long serialVersionUID = 1L;
 
-    public ObjectNotFoundException( String message) {
+    public ObjectAlreadyExistException(String message) {
         super(message);
     }
-    
 }
