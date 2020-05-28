@@ -21,7 +21,7 @@ public class User implements Serializable {
     private String lastName;
     private String email;
     private String password;
-    private boolean enabled;
+    private Boolean enabled;
 
     @DBRef(lazy = true) // Chave estrangeira (FK)
     private List<Role> roles = new ArrayList<>();
@@ -37,7 +37,7 @@ public class User implements Serializable {
     }
 
     public User(final String id, final String firstName, final String lastName,
-     final String email, final String password, final boolean enabled) {
+     final String email, final String password, final Boolean enabled) {
 
         this.id = id;
         this.firstName = firstName;
@@ -63,15 +63,15 @@ public class User implements Serializable {
         this.lastName = user.getLastName();
         this.email = user.getEmail();
         this.password = user.getPassword();
-        this.enabled = user.isEnabled();
+        this.enabled = user.isenabled();
         this.roles = user.getRoles();
     }
 
-    public boolean isEnabled() {
+    public Boolean isenabled() {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 

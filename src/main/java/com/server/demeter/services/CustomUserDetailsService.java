@@ -32,7 +32,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         if (!user.isPresent()) {
             throw new UsernameNotFoundException(String.format("UserNotExist"));
-        } else if (!user.get().isEnabled()) {
+        } else if (!user.get().isenabled()) {
             throw new ObjectNotEnabledException(String.format("UserNotEnabled"));
         }
 
@@ -88,7 +88,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         @Override
         public boolean isEnabled() {
-            return isEnabled();
+            return isenabled();
         }
     }
 

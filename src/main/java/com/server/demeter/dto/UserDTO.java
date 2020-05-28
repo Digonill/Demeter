@@ -18,7 +18,7 @@ public class UserDTO implements Serializable {
     private String email;
 
     private String password;
-    private boolean enabled;
+    private Boolean enabled;
 
     private List<Role> roles = new ArrayList<>();
 
@@ -30,7 +30,7 @@ public class UserDTO implements Serializable {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();
-        this.enabled = user.isEnabled();
+        this.enabled = user.isenabled();
         this.roles = user.getRoles();
     }
 
@@ -42,11 +42,11 @@ public class UserDTO implements Serializable {
         this.password = password;
     }
 
-    public boolean isEnabled() {
+    public Boolean isEnabled() {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 

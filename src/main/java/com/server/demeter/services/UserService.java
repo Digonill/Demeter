@@ -57,7 +57,7 @@ public class UserService {
 
         return updateUser
                 .map(u -> userRepository.save(new User(u.getId(), user.getFirstName(), user.getLastName(),
-                        user.getEmail(), u.getPassword(), u.isEnabled())))
+                        user.getEmail(), u.getPassword(), u.isenabled())))
                 .orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado"));
     }
 
