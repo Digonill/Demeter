@@ -1,7 +1,9 @@
 package com.server.demeter.resources;
 
+import javax.xml.ws.Response;
 
 import com.server.demeter.domain.User;
+import com.server.demeter.domain.VerificationToken;
 import com.server.demeter.dto.UserDTO;
 import com.server.demeter.services.UserService;
 import com.server.demeter.util.GenericResponse;
@@ -46,8 +48,41 @@ public class RegistrationResource {
 
     @GetMapping("/resendRegistrationToken/users")
     public ResponseEntity<Void> resendRegistrationToken(@RequestParam("email") String email) {
-        this.userService.generateNewVerificationToken(email);
+        this.userService.generateNewVerificationToken(email, 0);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/resetpassword")
+    public ResponseEntity<Void> resetPassword(@RequestParam("email") final String email) {
+        this.userService.generateNewVerificationToken(email, 1);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/changepassword/users")
+    public ResponseEntity<GenericResponse> changePassword(@RequestParam("id") String idUser,
+            @RequestParam("token") String token) {
+        String result = userService.validatePasswordResetToken(idUser, token);
+
+        if (result == null) {
+            return ResponseEntity.ok().body(new GenericResponse("success"));
+        }
+
+        return ResponseEntity.status(HttpStatus.SEE_OTHER).body(new GenericResponse(result));
+    }
+
+    @PostMapping("/savepassword/users")
+    public ResponseEntity<GenericResponse> savePassword(@RequestParam("token") String token, @RequestParam("password") String password) {
+        String result = userService.validateVerificationToken(token);
+
+        if (result != null) {
+            return ResponseEntity.status(HttpStatus.SEE_OTHER).body(new GenericResponse(result)); 
+        }
+        final VerificationToken vToken = userService.getVerificationBytoken(token);
+        if (vToken !=null){
+            userService.changeUserPassword(vToken.getUser(), password);
+        }
 
         return ResponseEntity.noContent().build();
+
     }
 }

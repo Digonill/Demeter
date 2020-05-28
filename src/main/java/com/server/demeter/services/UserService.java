@@ -82,7 +82,7 @@ public class UserService {
         user = create(user);
 
         // Envia email de confirmação
-        emailservice.sendConfirmationHtmlEmail(user, null);
+        emailservice.sendConfirmationHtmlEmail(user, null, 0);
         return user;
     }
 
@@ -123,18 +123,45 @@ public class UserService {
         return user.orElseThrow(() -> new ObjectNotFoundException(String.format("Usuário não encontrado!")));
     }
 
-    public VerificationToken generateNewVerificationToken(String email){
+    public VerificationToken generateNewVerificationToken(String email, int select) {
 
         User user = findByEmail(email);
         Optional<VerificationToken> vToken = verificationTokenRepository.findByUser(user);
+        VerificationToken newToken;
 
-        vToken.get().UpdateToken(UUID.randomUUID().toString());
+        if (vToken.isPresent()) {
+            vToken.get().UpdateToken(UUID.randomUUID().toString());
+            newToken = vToken.get();
+        } else {
+            newToken = new VerificationToken(UUID.randomUUID().toString(), user);
+        }
 
-        VerificationToken updatetoken = verificationTokenRepository.save(vToken.get());
-        emailservice.sendConfirmationHtmlEmail(user, updatetoken);
+        VerificationToken updatetoken = verificationTokenRepository.save(newToken);
+        emailservice.sendConfirmationHtmlEmail(user, updatetoken, select);
 
         return updatetoken;
     }
 
-    
+    public String validatePasswordResetToken(final String idUser, final String token) {
+        final Optional<VerificationToken> vToken = verificationTokenRepository.findByToken(token);
+
+        if (vToken.isPresent() && !(idUser.equals(vToken.get().getUser().getId()))) {
+            return "invalid Token";
+        }
+
+        final Calendar cal = Calendar.getInstance();
+        if ((vToken.get().getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            return "Expired";
+        }
+        return null;
+    }
+
+	public VerificationToken getVerificationBytoken(String token) {
+		return verificationTokenRepository.findByToken(token).orElseThrow(()-> new ObjectNotFoundException("Token não existe"));
+	}
+
+	public void changeUserPassword(User user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+	}
 }
