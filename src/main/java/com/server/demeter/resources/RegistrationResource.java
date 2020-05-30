@@ -1,7 +1,5 @@
 package com.server.demeter.resources;
 
-import javax.xml.ws.Response;
-
 import com.server.demeter.domain.User;
 import com.server.demeter.domain.VerificationToken;
 import com.server.demeter.dto.UserDTO;
