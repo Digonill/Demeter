@@ -49,10 +49,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring()
-        .antMatchers(HttpMethod.OPTIONS, "/**")
-        .antMatchers(HttpMethod.GET, "/**")
-        .antMatchers("/api/public/**")
-        .antMatchers("/api/logout/**");
+        web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**")
+                .antMatchers( "/api/public/**")
+                .antMatchers("/api/logout/**");
     }
 }

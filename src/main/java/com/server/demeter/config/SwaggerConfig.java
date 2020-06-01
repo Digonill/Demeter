@@ -1,7 +1,5 @@
 package com.server.demeter.config;
 
-import javax.swing.text.Document;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -83,7 +84,7 @@ public class UserResource {
         return ResponseEntity.ok().body(user.getRoles());
     }
 
-    @GetMapping(value = "/users/main")
+    @RequestMapping(value = "/users/main", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUserMain(Principal principal) {
         User user = this.service.findByEmail(principal.getName());
 
@@ -92,7 +93,7 @@ public class UserResource {
         return ResponseEntity.ok().body(dto);
     }
 
-    @GetMapping(value = "/logout")
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ResponseEntity<Void> logout(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
 
